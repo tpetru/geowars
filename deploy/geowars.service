@@ -1,0 +1,21 @@
+# systemd unit for the GeoWars API + event engine.
+# Install: sudo cp deploy/geowars.service /etc/systemd/system/ && sudo systemctl enable --now geowars
+[Unit]
+Description=GeoWars API server
+After=network.target mariadb.service
+Wants=mariadb.service
+
+[Service]
+Type=simple
+User=geowars
+WorkingDirectory=/opt/geowars
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/npm run start -w @geowars/server
+Restart=always
+RestartSec=5
+# SIGTERM triggers the server's graceful shutdown (engine stop, pool close)
+KillSignal=SIGTERM
+TimeoutStopSec=20
+
+[Install]
+WantedBy=multi-user.target
